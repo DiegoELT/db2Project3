@@ -2,10 +2,10 @@
 !.gitignore
 
 # Some files from the .tex
-.aux
-.bbl
-.blg
-.fdb_latexmk
-.fls 
-.log
-.synctex.gz
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls 
+*.log
+*.synctex.gz

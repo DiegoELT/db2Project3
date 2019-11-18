@@ -1,14 +1,14 @@
 # Fdb version 3
-["bibtex informe"] 1574033829 "informe.aux" "informe.bbl" "informe" 1574037756
+["bibtex informe"] 1574033829 "informe.aux" "informe.bbl" "informe" 1574045898
   "/usr/local/texlive/2019/texmf-dist/bibtex/bst/base/unsrt.bst" 1292289607 18030 1376b4b231b50c66211e47e42eda2875 ""
   "bibliography.bib" 1574032880 491 634501c1444cd6ac15fdaeb161cf3641 ""
-  "informe.aux" 1574033828 2137 c802dfcfc2ccf94157d5654eb4317297 "pdflatex"
+  "informe.aux" 1574045896 2137 c802dfcfc2ccf94157d5654eb4317297 "pdflatex"
   (generated)
-  "informe.bbl"
   "informe.blg"
-["pdflatex"] 1574033829 "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.tex" "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.pdf" "informe" 1574037756
-  "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.aux" 1574033828 2137 c802dfcfc2ccf94157d5654eb4317297 ""
-  "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.tex" 1574033828 2307 d936bfbac379d90a22f12bf42837d102 ""
+  "informe.bbl"
+["pdflatex"] 1574045897 "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.tex" "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.pdf" "informe" 1574045898
+  "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.aux" 1574045896 2137 c802dfcfc2ccf94157d5654eb4317297 ""
+  "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.tex" 1574045896 2306 501c28821673d13f277a1c0ee633f064 ""
   "/usr/local/texlive/2019/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1136768653 1328 c834bbb027764024c09d3d2bf908b5f0 ""
   "/usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
@@ -54,12 +54,12 @@
   "/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1554926747 3236234 c9e1d7ee149f8ef432b113b25e4c11d7 ""
   "/usr/local/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt" 1557519693 4258169 2a8fe8a306a8aac0b99a965a487a00a3 ""
   "/usr/local/texlive/2019/texmf.cnf" 1554926740 577 d150fef99ac436ad1156e86b0892f6ef ""
-  "informe.aux" 1574033828 2137 c802dfcfc2ccf94157d5654eb4317297 "pdflatex"
+  "informe.aux" 1574045896 2137 c802dfcfc2ccf94157d5654eb4317297 "pdflatex"
   "informe.bbl" 1574033828 377 7e13f4c51d1a1993ed4c9ac73caeaca6 "bibtex informe"
-  "informe.tex" 1574033828 2307 d936bfbac379d90a22f12bf42837d102 ""
+  "informe.tex" 1574045896 2306 501c28821673d13f277a1c0ee633f064 ""
   (generated)
   "informe.aux"
   "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.pdf"
-  "informe.log"
   "/Volumes/CSRALTS/Universidad/cicloVI/baseDeDatosII/db2Project3/informe/informe.log"
+  "informe.log"
   "informe.pdf"
