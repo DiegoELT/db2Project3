@@ -1,8 +1,11 @@
 \documentclass{article}
 
 \renewcommand\refname{Referencias}
+\renewcommand{\figurename}{Figura}
 
 \usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{floatrow}
 
 \title{CouchDB: Investigación e implemetanción demostrativa de una base de datos NoSQL}
 \author{Sebastián Hurtado \and Diego Linares \and Piero Marini}
@@ -19,6 +22,12 @@
             Un aspecto que diferencia a CouchDB de otras base de datos NoSQL es el mantenimiento de las propiedades ACID de una transacción. Las actualizaciones de documentos son serializadas, mientras que las lecturas de los mismos se realizan de forma concurrente. Para esta concurrencia es usado un \textit{Multi-Version Concurrency Control}, en el cual cada usuario ve una etapa constante de la base de datos de inicio a fin. La estructura de datos utilizada para organizar los datos es un B-Tree. Las actualización ocurren hasta el final de una transacción, dejando la base de datos en un estado consistente. \\
             El propósito de CouchDB, es el de trabajar con data no estructurada, particularmente para la web. Hacen uso del paradigma \textit{map-reduce}, replicación fácil y una \textit{straightforward RESTful API} \cite{lerner}. Como resultado de ello resulta útil para un ambiente de producción web. Además de las previas razones para ello, se le suma el echo de que toma de la arquitectura de la web (en palabras del desarrollador de Django \textit{``It's built of the web''}). Otras ventajas particulares son su alta escalabilidad y la ya mencionada facilidad de replicación. 
         \subsection{Cuadro comparativo con otras BD NoSQL}
+            Las prinicipales diferencias de CouchDB son 3: el lenguaje de implementación en el que se encuentra (Erlang), el modelo de datos que usa (JSON), y la carencia de un lenguaje de queries fijo.\\
+            \begin{figure}[h]
+                \caption{Cuadro comparativo de diferentes tipos de bases de datos NoSQL, tomada de \cite{sandeep}.}
+                \includegraphics[width = \textwidth]{comparisonTable.png}
+            \end{figure}
+            El beneficio del uso de Erlang es que este se encuentra priorizado para \textit{fault tolerance} y en segunda medida, para concurrencia. Como se mencionó anteriormente, los documentos de CouchDB se encuentran guardados en formato JSON, que se encuentra directamente relacionado con su sistema de views. El protocolo del mismo se encuentra basado en JSON, en conjunto con servidores de socket externo; además de no haber límite para el \textit{text-size} o número de elementos de cada documento. CouchDB carece de soporte para un lenguaje de queries declarativo, en cambio, estas son basadas en REST/HTTP. Los requests son hechos de forma directa a una URL, lo cual permite realizar pruebas de queries de forma directa, y que el acceso a las bases de datos sea estandarizado. 
         \subsection{Escenarios de uso}
     \section{Características}
         \subsection{Modelo de datos}

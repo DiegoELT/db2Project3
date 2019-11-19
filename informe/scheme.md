@@ -15,3 +15,8 @@ Databases of CouchDB store documents. Documents consist of a number of fields, c
 Provides all the ACID properties. Updates are serialized, reads are concurrent. Use of MVCC. Documents organized through BTrees. Its updates occur at the end of a transaction, leaving the database in a consistent state.
 
 It's purpose is to work with non-structured data, particularly for the web. Quote at the Forge. Useful for those sort of production environment. Borrows heavily from web architecture. Particular advantages are scalabilty and replication. 
+
+## Comparative Table
+
+Principal differnces: Erlang, JSON, lack of a query language, 
+
