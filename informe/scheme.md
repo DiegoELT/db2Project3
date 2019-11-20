@@ -16,7 +16,12 @@ Provides all the ACID properties. Updates are serialized, reads are concurrent. 
 
 It's purpose is to work with non-structured data, particularly for the web. Quote at the Forge. Useful for those sort of production environment. Borrows heavily from web architecture. Particular advantages are scalabilty and replication. 
 
-## Comparative Table
+### Comparative Table
 
 Principal differnces: Erlang, JSON, lack of a query language, 
 
+### Uses
+
+Relatively small market share (3853). Used when large data volumes and cloud based storage. Due to them being highly scalable (RDB can't handle more than 1024 columns). Quote Rascovsky. Advances in some environments. 
+
+Quote Hanlon. Faster access to data for the users. When there is disk storage available. Btree index and views stored in them. Used in Teragrid user portal
