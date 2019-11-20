@@ -25,3 +25,7 @@ Principal differnces: Erlang, JSON, lack of a query language,
 Relatively small market share (3853). Used when large data volumes and cloud based storage. Due to them being highly scalable (RDB can't handle more than 1024 columns). Quote Rascovsky. Advances in some environments. 
 
 Quote Hanlon. Faster access to data for the users. When there is disk storage available. Btree index and views stored in them. Used in Teragrid user portal
+
+## Characteristics
+
+### DataModel
