@@ -32,6 +32,26 @@ Quote Hanlon. Faster access to data for the users. When there is disk storage av
 
 ### Architecture of Distributed Storage
 
+Cite Padhy. Storage is btree based, and accesed by key or ranges (which use the tree operations), fast. View Engine written in JS, based on MapReduce jobs, serves for indices and extract data. Replicator to a local or remote database and sync. Graphic can be seen. 
+
 #### Fragmentation, Asignation and Replication
 
+CouchDB works in an append only insertion, which works against fragmentation. Appends are in the end of the document. No need for reallocation. It also allows compaction, writes revision to the new database files (delete documents). Then replaces the old one with the compacted one.
+
+Replication can be transient and persistent. Definition of transient. Definition of persistent. Replication works by comparing the target to the souce. Only transfer those who differ and delete the ones who are not anymore.
+
+Replication finishes when all the changes are not anymore, with some checkpoints in-between. Replication is done in pne direction only. So two tasks are needed to do replication in both ways. 
+
+According to the official documentation of couchDB, replication can be done in 3 ways: 
+
+1. Local
+2. Selector 
+3. Filter functions
+
 #### Processing of Distributed Queries
+
+Distributed Computation is possible thanks to the use of MapReduce programming model. Cite sciabarra. The map produces values that are classified through keys, and reduce aggregates the results. The mapreduce function is embedded in JS. The database does most of the job, while the developer extracts the results. 
+
+The architecture of queries is direct shard connection only. The component that performs the shard key resolution is the query coordinator. One disadvantage is that CouchDB doesn't support queries using non-shard key value. The merge of multiple results from multiple shard is by the query coordinator to all the clients. Sorted order is supported. 
+
+CouchDB Lounge is a package that allows for clustering with constant hashing, which allows the merge from constantly hashed nodes to be easier. This is currently being moved to Erlang. 

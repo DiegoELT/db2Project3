@@ -38,8 +38,26 @@
             \subsubsection{Búsqueda}
             \subsubsection{Indexación} 
         \subsection{Arquitectura de almacenamiento distribuido}
+            Es posible dividir la arquitectura de CouchDB en 3 componentes principales: engine de almacenamiento, engine de vistas, y replicador \cite{padhy}. El almacenamiento es basado en una estructura de \textit{BTree}, y accedidas por llave o rango (haciendo uso de las operaciones del árbol), de forma rápida. El engine de vistas se encuentra escrito en JavaScript, basado en jobs de MapReduce, por lo que sirve para indices y extracción de data. El replicador se conecta a bases de datos locales o remotas y las sincronizan. \\
+            Las relaciones entre los componentes mencionados pueden ser observados en el siguiente gráfico. \\
+            \begin{figure}[h]
+                \caption{Gráfico de relación entre los componentes distribuidos de CouchDB, tomado de \cite{padhy}.}
+                \includegraphics[width = 0.6\textwidth]{architecture.png}
+            \end{figure}
             \subsubsection{Fragmentación, Asignación, Replicación}
+                Las inserciones en CouchDB son realizadas en forma de \textit{append-only}, de forma que se evita la Fragmentación. Los appends son realizados al final del documento que se busca modificar. No hay una necesidad de realocación de memoria. De la misma manera, permite realizar compactación, a través de la escritura de un \textit{revision} a los archivos de una nueva base de datos (en la que incluye los documentos eliminados). Finalmente, la antigua base de datos es remplazada con la nueva que se encuentra compactada. \\ 
+                De acuerdo a la documentación de CouchDB, la replicación se puede realizar de dos maneras, transiente, y persistente. Una replicación transiente se refiere a la carencia de un documento que sirva de backup durante la replicación; este hace uso del api endpoint \texttt{\_replicate}, y no permite realizar queries de su estado hasta que el trabajo se encuentre terminado. Las replicaciones persistentes mantienen un documento con los parametros de replicación utilzados, los cuales se guardan en una base de datos \texttt{\_replicator}, en donde cada documento describe un proceso tomando lugar. Las replicaciones funcionan comparando el objetivo con el source. Unicamente se transfieren aquellos documentos que difieren y se eliminan los que no se encuentran en la fuente. \\
+                Una replicación finaliza cuando el stream de cambios se ha acabado, con algunos check-points realizado en medio en caso de fallas o caída del servidor. Las replicaciones son hechas en una única dirección por, lo cual es necesario dos procesos para realizar una replicación de master a master. \\
+                De acuerdo a la documentación oficial de CouchDB, el control de documentos a replicar puede ser hecho a través de tres métodos: 
+                \begin{enumerate}
+                    \item Local: si los documentos son locales estos nunca se replican. 
+                    \item Selector: se encuentran en los documentos de parámetro y contienen una query que determina si un determinado documento debe ser replicado o no. 
+                    \item Funciones de filtrado: por cada uno de los documentos que se van a replicar, estos pasan por una función de filtrado, que en caso de retornar verdadero, continúan con el proceso. 
+                \end{enumerate}
             \subsubsection{Procesamiento de consultas distribuidas}
+                La computación distribuida es posible en CouchDB gracias al uso del modelo de programación MapReduce. Es esencialmente un patrón que permite implementar queries de gran escala para un motor de búsqueda \cite{sciabrra}. El mapeo produce valores que son clasificados a través de llaves, y el reduce agrega estos resultados. La función se encuentra embedida como parte de JavaScript. Esto significa que la base de datos hace la mayor parte del trabajo, mientras que el developer se debe enfocar en la extracción de la información. \\ 
+                La arquitectura de quieres posee un feature conocido como \textit{direct shard connection only}, donde un \textit{shard} es una partición horizontal de data en la base de datos, con el objetivo de generar durabilidad. El componente que realiza la resolución del shard-key es el coordinador de queries. Una desventaja ed CouchDB, es que este no ofrece soporte para queries que usen non-shard key values. Por otra parte, el merge de los resultados múltiples provenientes de múltiples shards es también realizado por el coordinador de queries y enviado a cada uno de los clientes. El ordenamiento de estos resultados se encuentra soportado. \\ 
+                Cabe resaltar la existencia de CouchDB Lounge, un paquete que permite clustering de nodos que reciben hashing constante. Este permite que estos nodos se mezclen de una forma más sencilla. Actualmente este se encuentra en proceso de traducción a Erlang para su integración en CouchDB regular. 
     \section{Implementación Demostrativa}
         \subsection{Carga de una colección de datos}
         \subsection{Consulta de datos de forma distribuida}
