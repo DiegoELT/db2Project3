@@ -29,3 +29,9 @@ Quote Hanlon. Faster access to data for the users. When there is disk storage av
 ## Characteristics
 
 ### DataModel
+
+### Architecture of Distributed Storage
+
+#### Fragmentation, Asignation and Replication
+
+#### Processing of Distributed Queries
