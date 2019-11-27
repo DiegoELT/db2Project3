@@ -65,8 +65,8 @@
             \begin{itemize}
                 \item Revision number: Es la versión que couchdb le da al documento. Para hacer una correcta actualización debes indicar la correcta versión.
                 \item Puedes modificar todos los campos o solo uno.
-                \item Modificar la siguiente inserción: curl -X PUT localhost:5984/yelpmain/101 -d '{"id": 101, "first_name": "Diana","last_name": "Davila", "email": "diana@tripod.com"}'
-                {"ok":true,"id":"101","rev":"1-9facd005099ce22bf8cc79d63b32b494"}
+                \item Modificar la siguiente inserción: curl -X PUT localhost:5984/yelpmain/101 -d 
+                '{"id": 101, "first_name": "Diana","last_name": "Davila", "email": "diana@tripod.com"}'
                 \item Modificación: curl -X PUT http://127.0.0.1:5984/yelpmain/101 -d '{"_id":"101","_rev":"1-9facd005099ce22bf8cc79d63b32b494","email":"diana98@tripod.com"}' 
             \end{itemize}
             \subsubsection{Búsqueda}
