@@ -4,6 +4,7 @@
 \renewcommand{\figurename}{Figura}
 
 \usepackage{graphicx}
+\usepackage{listings}
 \graphicspath{{images/}}
 \usepackage{floatrow}
 
@@ -34,9 +35,86 @@
     \section{Características}
         \subsection{Modelo de datos}
             \subsubsection{Inserciones}
+            \subsection{Modelo de datos}
+            \subsubsection{Inserciones}
+             \begin{itemize}
+                 \item Fauxton o Futon (interfaz gráfica): La interfaz tiene una opción de inserción de documentos (elementos).
+                 \item Línea comandos (curl): Usando comandos HTTP, podemos interactuar con la base de datos.
+                 \begin{itemize}
+                     \item Conexión con el puerto 5984: curl http://127.0.0.1:5984/
+                     \item Crear la base de datos ciudades: curl -X PUT http://127.0.0.1:5984/ciudades
+                     \item Insertar el elemento Lima con id 1: curl -X PUT http://127.0.0.1:5984/ciudades/1 -d '{"nombre":"Lima", "pais":"Peru", "habitantes":"8575000"}'
+                     \item Para obtener el elemento de id 1: curl -X GET http://127.0.0.1:5984/ciudades/1
+                 \end{itemize}
+                 \item Python: Podemos basarnos en anteriores proyectos para insertar 100 datos a la base de datos.
+                 \begin{lstlisting}
+            import couchdb
+            import json
+        
+            couch = couchdb.Server()
+            db = couch.create('yelpmain')
+            with open('example.json', 'r') as myfile:
+                data=myfile.read()
+            
+            obj = json.loads(data)
+            print(obj)
+            for doc in obj:
+                db.save(doc)
+                 \end{lstlisting}
             \subsubsection{Actualizaciones}
+            \begin{itemize}
+                \item Revision number: Es la versión que couchdb le da al documento. Para hacer una correcta actualización debes indicar la correcta versión.
+                \item Puedes modificar todos los campos o solo uno.
+                \item Modificar la siguiente inserción: curl -X PUT localhost:5984/yelpmain/101 -d '{"id": 101, "first_name": "Diana","last_name": "Davila", "email": "diana@tripod.com"}'
+                {"ok":true,"id":"101","rev":"1-9facd005099ce22bf8cc79d63b32b494"}
+                \item Modificación: curl -X PUT http://127.0.0.1:5984/yelpmain/101 -d '{"_id":"101","_rev":"1-9facd005099ce22bf8cc79d63b32b494","email":"diana98@tripod.com"}' 
+            \end{itemize}
             \subsubsection{Búsqueda}
-            \subsubsection{Indexación} 
+            La búsqueda se realiza mediante un POST y find. El selector da las condiciones para el atributo a ser juzgado y fields es el filtro de campos a ser mostrados.
+            Podemos centrarnos en los Mango Queries. Podemos usarlos en la interfaz gráfica fauxton para hacer búsquedas.
+            Por ejemplo, seleccionamos a Hortensia para ver su correo electrónico.
+            \begin{lstlisting}
+                {
+            "selector": {
+                "first_name": {"$eq": "Hortensia"} }, 
+            "fields": ["email"]
+            }
+            \end{lstlisting}
+            O podemos usar múltiples condiciones con operadores lógicos.
+            En este caso, una de las condiciones es que el nombre sea igual a Sebastian y la otra que haya nacido entre 1998 y 2000. 
+            \begin{lstlisting}
+                {
+    "selector": {
+        "$and": [
+            {"first_name": {"$eq": "Sebastian"}},
+            {"year": {"$in": [1998, 2000]}}
+            ]
+        },
+    "fields": ["email","year"]
+    }
+            \end{lstlisting}
+
+            \subsubsection{Indexación}
+            Para la indexación, vamos a manage indexes y agregamos el índice. 
+            \begin{lstlisting}
+                {
+            "index": {
+                "fields": ["first_name"]
+            },
+            "name" : "name-index",
+            "type" : "json"
+                }
+            \end{lstlisting}
+            También podemos crear un partial index, que tiene una mejora en performance con respecto a usar un selector y el índice.
+            \begin{lstlisting}
+                {
+            "index": {
+                "partial_filter_selector": {"year": {"$gt": 1998}},
+                "fields": ["first_name"]
+            }
+                  } 
+            \end{lstlisting} 
+            Por ejemplo, en el caso anterior, se filtran a los que nacieron antes de o en 1998.
         \subsection{Arquitectura de almacenamiento distribuido}
             Es posible dividir la arquitectura de CouchDB en 3 componentes principales: engine de almacenamiento, engine de vistas, y replicador \cite{padhy}. El almacenamiento es basado en una estructura de \textit{BTree}, y accedidas por llave o rango (haciendo uso de las operaciones del árbol), de forma rápida. El engine de vistas se encuentra escrito en JavaScript, basado en jobs de MapReduce, por lo que sirve para indices y extracción de data. El replicador se conecta a bases de datos locales o remotas y las sincronizan. \\
             Las relaciones entre los componentes mencionados pueden ser observados en el siguiente gráfico. \\
