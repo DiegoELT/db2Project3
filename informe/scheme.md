@@ -55,3 +55,9 @@ Distributed Computation is possible thanks to the use of MapReduce programming m
 The architecture of queries is direct shard connection only. The component that performs the shard key resolution is the query coordinator. One disadvantage is that CouchDB doesn't support queries using non-shard key value. The merge of multiple results from multiple shard is by the query coordinator to all the clients. Sorted order is supported. 
 
 CouchDB Lounge is a package that allows for clustering with constant hashing, which allows the merge from constantly hashed nodes to be easier. This is currently being moved to Erlang. 
+
+## Conclusions
+
+After researching and doing a simple implementation of CouchDB succesfully, we managed to reach the following conclusions.
+
+1. The replication benefits of CouchDB allows for advantages when working with distributed databases. Transient replication allows for backward compatibility with older versions of the platform. And persistent replication allows a document with parameters to be set so the developer knows exactly what the replication process is taking place. Also they offer a variety of ways to do it, which might speed up the process (in some cases selector and in some filter functions). In summary, this allows for a highly scalable database that is also resistent to failures due to the use of checkpoints and the connection between different nodes, with the only disadvantage being the lack of master-master replications. 
