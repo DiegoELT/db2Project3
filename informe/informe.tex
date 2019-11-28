@@ -273,9 +273,9 @@
 
 		Queries:
 		\begin{itemize}
-			\item Búsqueda por \textit{compliment_count}
+			\item Búsqueda por \textit{compliment\_count}
 			\item Búsqueda por \textit{date} (Rango)
-			\item Búsqueda por \textit{business_id} (Match exacto)
+			\item Búsqueda por \textit{business\_id} (Match exacto)
 		\end{itemize}
 		\begin{lstlisting}[language = bash, gobble = 28]
 				curl -X POST http://admin:password@localhost:5984/db2-project3/_find/ -d '{ "selector": { "compliment_count": { "$gt": 5 } } }' -H "Content-Type:application/json"
