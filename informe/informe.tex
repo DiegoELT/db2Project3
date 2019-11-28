@@ -167,13 +167,128 @@
                 La arquitectura de quieres posee un feature conocido como \textit{direct shard connection only}, donde un \textit{shard} es una partición horizontal de data en la base de datos, con el objetivo de generar durabilidad. El componente que realiza la resolución del shard-key es el coordinador de queries. Una desventaja ed CouchDB, es que este no ofrece soporte para queries que usen non-shard key values. Por otra parte, el merge de los resultados múltiples provenientes de múltiples shards es también realizado por el coordinador de queries y enviado a cada uno de los clientes. El ordenamiento de estos resultados se encuentra soportado. \\ 
                 Cabe resaltar la existencia de CouchDB Lounge, un paquete que permite clustering de nodos que reciben hashing constante. Este permite que estos nodos se mezclen de una forma más sencilla. Actualmente este se encuentra en proceso de traducción a Erlang para su integración en CouchDB regular. 
     \section{Implementación Demostrativa}
+		Utilizaremos instancias de docker para simular el ambiente de trabajo y poder crear un cluster de CouchDB. Para este caso específico, se crearon 3 instancias de Docker, todas corriendo una instancia de CouchDB. Cada una de estas instancias consiste de 3 replicas, cada una con 4 shards o fragmentos. \\
+		Esto se logró a través de un docker-compose, programa que permite orquestrar y configurar varias instancias de Docker para que trabajen juntas y, en este caso, dentro de la misma red para poder comunicarse entre nodos.
+		\begin{lstlisting}[gobble = 28]
+				version: "3.5"
+				networks:
+				  network:
+				services:
+				  server-0:
+					environment:
+					  COUCHDB_PASSWORD: -pbkdf2-847043acc65626c8eb98da6d78682fbc493a1787,f7b1a3e4b624f4f0bbfe87e96841eda0,10
+					  COUCHDB_SECRET: 0123456789abcdef0123456789abcdef
+					  COUCHDB_USER: admin
+					  NODENAME: couchdb-0.docker.com
+					image: couchdb:2.3.0
+					networks:
+					  network:
+						aliases:
+						  - couchdb-0.docker.com
+					ports:
+					  - "5984:5984"
+					  - "5986:5986"
+					volumes:
+					  - "volume-0:/opt/couchdb/data"
+				  server-1:
+					environment:
+					  COUCHDB_PASSWORD: -pbkdf2-847043acc65626c8eb98da6d78682fbc493a1787,f7b1a3e4b624f4f0bbfe87e96841eda0,10
+					  COUCHDB_SECRET: 0123456789abcdef0123456789abcdef
+					  COUCHDB_USER: admin
+					  NODENAME: couchdb-1.docker.com
+					image: couchdb:2.3.0
+					networks:
+					  network:
+						aliases:
+						  - couchdb-1.docker.com
+					ports:
+					  - "15984:5984"
+					  - "15986:5986"
+					volumes:
+					  - "volume-1:/opt/couchdb/data"
+				  server-2:
+					environment:
+					  COUCHDB_PASSWORD: -pbkdf2-847043acc65626c8eb98da6d78682fbc493a1787,f7b1a3e4b624f4f0bbfe87e96841eda0,10
+					  COUCHDB_SECRET: 0123456789abcdef0123456789abcdef
+					  COUCHDB_USER: admin
+					  NODENAME: couchdb-2.docker.com
+					image: couchdb:2.3.0
+					networks:
+					  network:
+						aliases:
+						  - couchdb-2.docker.com
+					ports:
+					  - "25984:5984"
+					  - "25986:5986"
+					volumes:
+					  - "volume-2:/opt/couchdb/data"
+				volumes:
+				  volume-0:
+				  volume-1:
+				  volume-2:
+		\end{lstlisting}
+ 
+		Luego, se creó la base de datos en uno de los nodos y esta fue replicada en los otros 2.
+		\begin{lstlisting}[language = bash, gobble = 28]
+				curl -X PUT "http://admin:password@localhost:5984/db2-project3?q=4&n=3"
+		\end{lstlisting}
+		Para comprobar:
+		\begin{lstlisting}[language = bash, gobble = 28]
+				curl -s "http://admin:password@localhost:5984/db2-project3/_shards" | jq .
+		\end{lstlisting}
+		\begin{lstlisting}[gobble = 28]
+				{
+				  "shards": {
+					"00000000-3fffffff": [
+					  "couchdb@couchdb-0.docker.com",
+					  "couchdb@couchdb-1.docker.com",
+					  "couchdb@couchdb-2.docker.com"
+					],
+					"40000000-7fffffff": [
+					  "couchdb@couchdb-0.docker.com",
+					  "couchdb@couchdb-1.docker.com",
+					  "couchdb@couchdb-2.docker.com"
+					],
+					"80000000-bfffffff": [
+					  "couchdb@couchdb-0.docker.com",
+					  "couchdb@couchdb-1.docker.com",
+					  "couchdb@couchdb-2.docker.com"
+					],
+					"c0000000-ffffffff": [
+					  "couchdb@couchdb-0.docker.com",
+					  "couchdb@couchdb-1.docker.com",
+					  "couchdb@couchdb-2.docker.com"
+					]
+				  }
+				}
+		\end{lstlisting}
+		
         \subsection{Carga de una colección de datos}
+		\begin{lstlisting}[language = bash, gobble = 28]
+				curl -X POST http://admin:password@localhost:5984/db2-project3/_bulk_docs -d @data.json -H "Content-Type:application/json"
+		\end{lstlisting}
+		Desafortunadamente, cargando un archivo json de datos con más de 1 millon de líneas no fue posible para couchdb. En este caso decidimos hacer un split del archivo en batches de 100000 elementos y subirlos individualmente para poder cargar toda la data que teníamos disponible.
+
         \subsection{Consulta de datos de forma distribuida}
+
+		Queries:
+		\begin{itemize}
+			\item Búsqueda por \textit{compliment_count}
+			\item Búsqueda por \textit{date} (Rango)
+			\item Búsqueda por \textit{business_id} (Match exacto)
+		\end{itemize}
+		\begin{lstlisting}[language = bash, gobble = 28]
+				curl -X POST http://admin:password@localhost:5984/db2-project3/_find/ -d '{ "selector": { "compliment_count": { "$gt": 5 } } }' -H "Content-Type:application/json"
+				curl -X POST http://admin:password@localhost:5984/db2-project3/_find/ -d '{ "selector": { "date": { "$gt": "2012-02-06 01:30:34", "$lt": "2012-02-08 06:40:50" } } }' -H "Content-Type:application/json"
+				curl -X POST http://admin:password@localhost:5984/db2-project3/_find/ -d '{ "selector": { "business_id": { "$eq": "UOST50KiVrSFTPMXGH9njg" } } }' -H "Content-Type:application/json"
+		\end{lstlisting}
+
     \section{Conclusiones}
         Sintentizando, posterior a investigar y realizar una simple implementación demostrativa de CouchDB de forma satisfactoria, se pueden plantear las siguientes conclusiones.
         \begin{enumerate}
             \item Los beneficios de replicación de CouchDB permite ventajas tangibles para trabajar con bases de datos distribuidas de gran tamaño. La replicación transiente permite \textit{backwards compatibility} con versiones antiguas de la plataforma. Por otra parte la replicación persistente permite controlar con mayor libertad los parametros y que un desarrollador este al tanto de como esta tomando lugar el proceso en cuestión. Además, se ofrecen varias formas de realizar, lo cual permite tomar la decisión optima (entre selector y funciones de filtrado). En resumen, esto da lugar a una base de datos altamente escalable que además es resistente a fallos gracias al uso de checkpoints y los documentos de diferencia. La única desventaja a considerar es la carencia de replicación de master a master, para lo cual son necesario dos procesos (de ida y vuelta).
             \item Los mango queries usados en CouchDB tienen formato de diccionario, por lo que su parseo es sencillo. Con esto, en una implementación más profesional, podríamos alterar los selectores según parámetros definidos de manera sencilla en un lenguaje como \textit{Python} usando la librería \textit{json}. Por ejemplo, podríamos llevar la cuenta del acceso a cada uno de los atributos de las tablas y comenzar a crear índices o particiones en la tabla a partir de una heurística. Podríamos mantener el campo como una variable e ir cambiando esta variable según el algoritmo. En resumen, este tipo de query pueden ser fácilmente parseados, configurados y aplicados en \textit{running time}, dandole mucha más flexibilidad a nuestra base de datos.
+			\item La habilidad de Couchdb de manejar su fragmentación, junto con sus habilidades de replicación, crean un ambiente de desarrollo muy amigable y fácil de aprender y aplicar. Couchdb solo necesita saber cuantas \textit{réplicas} quieres crear, y cuantas \textit{shards} quieres en cada réplica y el sistema distribuirá equivalentemente entre todos los nodos presentes. Esto no quita la posibilidad que el usuario puede asignar manualmente cada shard y cada réplica al lugar específico que la requiere. Gracias a esto pudimos crear un ambiente de desarrollo utilizando Docker en muy poco tiempo y estar listos para cargar la data y crear nuestros queries.
         \end{enumerate}
     \newpage
 
